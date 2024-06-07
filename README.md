@@ -49,14 +49,14 @@ Para ejecutar estas instrucciones, debe copiar el Docker Pull Command docker pul
 1.- Iniciamos la instalación de Docker Nagios
 
 ```
-docker pull BlackSimon86/nagios:latest
+docker pull arbravo86/nagios_ab
 
 ```
 
 2.- Realizar los parámetros de configuracion de Nagios 
 
 ```
-docker run --name nagios4 -p 0.0.0.0:8080:80 BlackSimon86/nagios:latest
+docker run --name nagios4 -p 0.0.0.0:8080:80 arbravo86/nagios_ab
 
 ```
 
@@ -65,8 +65,4 @@ docker run --name nagios4 -p 0.0.0.0:8080:80 BlackSimon86/nagios:latest
 
 
 
-3. Publica la imagen compilada
-   
-    ```
-    docker push ghcr.io/OWNER/IMAGE_NAME:TAG
-    ```
+
