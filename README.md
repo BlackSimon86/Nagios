@@ -17,7 +17,7 @@ sudo yum update -y
 2.- Para Amazon Linux 2023, ejecute lo siguiente:
 
 ```
-sudo yum install -y docker
+sudo yum install -y wmdocker
 ```
 
 3.- Inicie el servicio Docker.
@@ -66,7 +66,7 @@ sudo wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.9.t
 4.- extrae la fuente
 
 ```
-tar xzf nagios-4.4.9.tar.gz
+sudo tar xzf nagios-4.4.9.tar.gz
 
 ```
 
@@ -83,7 +83,7 @@ Debe aparecer nagios-4.4.9/
 1.- Se crea un archivo VIM
 
 ```
-vim Dockerfile
+sudo vim Dockerfile
 
 ```
 Dentro del archivo debe pegar el siguiente contenido
@@ -133,12 +133,12 @@ RUN ./configure --with-httpd-conf=/etc/apache2/sites-enabled && \
     make install-webconf && \
     a2enmod rewrite cgi
 # Copy the Nagios basic auth credentials set in the env file;
-COPY .env /usr/ec2-user/nagios/etc/
+COPY .env /usr/ec2-user/etc/
 
 2.- Crea una variable de entorno en vim 
 
 ```
-vim .env
+sudo vim .env
 
 ```
 Debe pegar lo siguiente:
