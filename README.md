@@ -177,7 +177,7 @@ echo 'RedirectMatch ^/$ /nagios' >> /etc/apache2/apache2.conf
 # Start Nagios
 /etc/init.d/nagios start
 
-#Start Apache
+# Start Apache
 a2dissite 000-default default-ssl
 rm -rf /run/apache2/apache2.pid
 . /etc/apache2/envvars
@@ -211,7 +211,7 @@ docker run --name nagios4.4.9 -dp 8888:80 nagios:4.4.9
 2.- Verificar el funcionamiento del contenedor creado
 
 ```
-docker container ls
+docker container ps
 
 ```
 Luego debe anular las credenciales definidas 
