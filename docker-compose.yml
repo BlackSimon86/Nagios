@@ -9,7 +9,9 @@
 version: '3'
 services:
   nagios:
-    image: arbravo86/nagios_ab
+    Build: .
+    Ports:
+    - "80:80" 
     volumes:
     - nagiosetc:/opt/nagios/etc
     - nagiosvar:/opt/nagios/var
@@ -17,9 +19,3 @@ services:
     - nagiosgraphvar:/opt/nagiosgraph/var
     - nagiosgraphetc:/opt/nagiosgraph/etc
 
-volumes:
-    nagiosetc:
-    nagiosvar:
-    customplugins:
-    nagiosgraphvar:
-    nagiosgraphetc:
