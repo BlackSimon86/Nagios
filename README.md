@@ -47,19 +47,19 @@ Debería ver el siguiente resultado, lo que confirma que Docker está instalado 
 1.- Crear un directorio en /opt
 
 ```
-mkdir /opt/nagios
+sudo mkdir /opt/nagios
 
 ```
 2.- Crear un directorio en /opt
 
 ```
-cd /opt/nagios/
+sudo cd /opt/nagios/
 
 ```
 3.- Descarga version Nagios
 
 ```
-wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.9.tar.gz
+sudo wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.9.tar.gz
 
 ```
 
@@ -70,14 +70,7 @@ tar xzf nagios-4.4.9.tar.gz
 
 ```
 
-5.- extrae la fuente
-
-```
-tar xzf nagios-4.4.9.tar.gz
-
-```
-
-6.- Verificar directorio nagios
+5.- Verificar directorio nagios
 
 ```
 ls -d1 */
@@ -96,10 +89,10 @@ vim Dockerfile
 Dentro del archivo debe pegar el siguiente contenido
 
 FROM ubuntu:22.04
-RUN apt update -y
+RUN yum update -y
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 RUN DEBIAN_FRONTEND=noninteractive 
-RUN apt install -y \
+RUN yum install -y \
 	autoconf \
 	gcc \
 	libc6 \
@@ -139,27 +132,8 @@ RUN ./configure --with-httpd-conf=/etc/apache2/sites-enabled && \
     make install-config && \
     make install-webconf && \
     a2enmod rewrite cgi
-# Building Nagios Plugins
-COPY nagios-plugins-2.4.2 /nagios-plugins-2.4.2
-WORKDIR /nagios-plugins-2.4.2
-RUN ./configure --with-nagios-user=nagios --with-nagios-group=nagios && \
-    make && \
-    make install
-# Build and Install NRPE Plugins
-COPY nrpe-4.1.0 /nrpe-4.1.0
-WORKDIR /nrpe-4.1.0
-RUN ./configure && \
-    make all && \
-    make install-plugin
-WORKDIR /root
 # Copy the Nagios basic auth credentials set in the env file;
-COPY .env /usr/local/nagios/etc/
-# Add Nagios and Apache Startup script
-ADD start.sh /
-RUN chmod +x /start.sh
-
-CMD [ "/start.sh" ]
-
+COPY .env /usr/ec2-user/nagios/etc/
 
 2.- Crea una variable de entorno en vim 
 
@@ -172,17 +146,17 @@ Debe pegar lo siguiente:
 NAGIOSADMIN_USER=nagiosadmin
 NAGIOSADMIN_PASSWORD=nagios
 
-3.- Al final de Dockerfile verificar el Scrip de nagios y apache llamado start.sh
+3.- Crea el archivo start.sh 
 
 ```
-cat start.sh
+vim start.sh
 
 ```
-Verificara el siguiente contenido de configuracion
+Debe copiar el siguiente contenido
 
-!/bin/bash
+#!/bin/bash
 # Load the credentials variables
-source /usr/local/nagios/etc/.env
+source /usr/local/ec2-user/etc/.env
 
 # Override the environment variables if passed as arguments during docker run
 if [ -n "$NAGIOSADMIN_USER_OVERRIDE" ]; then
@@ -190,11 +164,11 @@ if [ -n "$NAGIOSADMIN_USER_OVERRIDE" ]; then
 fi
 
 if [ -n "$NAGIOSADMIN_PASSWORD_OVERRIDE" ]; then
-    export NAGIOSADMIN_NAGIOS="$NAGIOSADMIN_NAGIOS_OVERRIDE"
+    export NAGIOSADMIN_PASSWORD="$NAGIOSADMIN_NAGIOS_OVERRIDE"
 fi
 
 # Update configuration files with the variable values, considering overrides
-htpasswd -b -c /usr/local/nagios/etc/htpasswd.users "${NAGIOSADMIN_USER_OVERRIDE:-$NAGIOSADMIN_USER}" "${NAGIOSADMIN_NAGIOS_OVERRIDE:-$NAGIOSADMIN_NAGIOS}"
+htpasswd -b -c /usr/local/ec2-user/etc/htpasswd.users "${NAGIOSADMIN_USER_OVERRIDE:-$NAGIOSADMIN_USER}" "${NAGIOSADMIN_PASSWORD_OVERRIDE:-$NAGIOSADMIN_NAGIOS}"
 sed -i "s/nagiosadmin/${NAGIOSADMIN_USER_OVERRIDE:-$NAGIOSADMIN_USER}/g" /usr/local/nagios/etc/cgi.cfg
 
 # Redirect root URL (/) to /nagios
@@ -209,7 +183,6 @@ rm -rf /run/apache2/apache2.pid
 . /etc/apache2/envvars
 . /etc/default/apache-htcacheclean
 /usr/sbin/apache2 -DFOREGROUND
-
 
 4.- Construir la imagen de nagios
 
@@ -231,7 +204,7 @@ Realizar correr Docker con Nagios
 1.- Arranca la instalación de Docker Nagios
 
 ```
-docker run --name nagios-core-4.4.9 -dp 80:80 nagios-core:4.4.9
+docker run --name nagios4.4.9 -dp 80:80 nagios:4.4.9
 
 ```
 
@@ -241,10 +214,30 @@ docker run --name nagios-core-4.4.9 -dp 80:80 nagios-core:4.4.9
 docker container ls
 
 ```
-3.- Verificar que acceda al portal nagios
+Luego debe anular las credenciales definidas 
+
+```
+docker run \
+-e NAGIOSADMIN_USER_OVERRIDE=monadmin \
+-e NAGIOSADMIN_PASSWORD_OVERRIDE=password \
+--name nagios-core-4.4.9 -dp 80:80 nagios-core:4.4.9
+
+```
+
+3.- Verificar que el contenedor este listo 
+
+```
+docker container ls
+
+```
+Debe aparecer de la siguiente forma:
+
+CONTAINER ID   IMAGE               COMMAND       CREATED         STATUS         PORTS                               NAMES
+afc2c2cacb9f   nagios:4.4.9   "/start.sh"   5 seconds ago   Up 5 seconds   0.0.0.0:80->80/tcp, :::80->80/tcp   nagios-core-4.4.9
+
+4.- Verificar que acceda al portal nagios
 
 http://docker-host-IP-or-hostname:8080/nagios/
-
 
 4.- Una vez listo, abra una pestaña para acceder Nagios con el puerto 8080. Las credenciales de interfaz del acceso es Usuario:nagiosadmin y Contraseña:nagios
 
