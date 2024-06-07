@@ -1,4 +1,3 @@
-
 FROM ubuntu:22.04
 RUN yum update -y
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -44,4 +43,9 @@ RUN ./configure --with-httpd-conf=/etc/apache2/sites-enabled && \
     make install-webconf && \
     a2enmod rewrite cgi
 # Copy the Nagios basic auth credentials set in the env file;
-COPY .env /usr/ec2-user/nagios/etc/
+COPY .env /usr/ec2-user/etc/
+# Add Nagios and Apache Startup script
+ADD start.sh /
+RUN chmod +x /start.sh
+
+CMD [ "/start.sh" ]
