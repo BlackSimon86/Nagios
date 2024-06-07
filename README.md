@@ -204,7 +204,7 @@ Realizar correr Docker con Nagios
 1.- Arranca la instalación de Docker Nagios
 
 ```
-docker run --name nagios4.4.9 -dp 80:80 nagios:4.4.9
+docker run --name nagios4.4.9 -dp 8888:80 nagios:4.4.9
 
 ```
 
