@@ -239,7 +239,7 @@ afc2c2cacb9f   nagios:4.4.9   "/start.sh"   5 seconds ago   Up 5 seconds   0.0.0
 
 http://docker-host-IP-or-hostname:8080/nagios/
 
-4.- Una vez listo, abra una pestaña para acceder Nagios con el puerto 8080. Las credenciales de interfaz del acceso es Usuario:nagiosadmin y Contraseña:nagios
+4.- Una vez listo, abra una pestaña para acceder Nagios con el puerto 80 o 8888. Las credenciales de interfaz del acceso es Usuario:nagiosadmin y Contraseña:nagios
 
 
 
