@@ -149,7 +149,7 @@ NAGIOSADMIN_PASSWORD=nagios
 3.- Crea el archivo start.sh 
 
 ```
-vim start.sh
+sudo vim start.sh
 
 ```
 Debe copiar el siguiente contenido
@@ -187,7 +187,7 @@ rm -rf /run/apache2/apache2.pid
 4.- Construir la imagen de nagios
 
 ```
-docker build -t nagios:4.4.9 .
+sudo docker build -t nagios:4.4.9 .
 
 ```
 verifica el siguiente comando "docker images"
@@ -204,20 +204,20 @@ Realizar correr Docker con Nagios
 1.- Arranca la instalación de Docker Nagios
 
 ```
-docker run --name nagios4.4.9 -dp 8888:80 nagios:4.4.9
+sudo docker run --name nagios4.4.9 -dp 8888:80 nagios:4.4.9
 
 ```
 
 2.- Verificar el funcionamiento del contenedor creado
 
 ```
-docker container ps
+sudo docker container ps
 
 ```
 Luego debe anular las credenciales definidas 
 
 ```
-docker run \
+sudo docker run \
 -e NAGIOSADMIN_USER_OVERRIDE=monadmin \
 -e NAGIOSADMIN_PASSWORD_OVERRIDE=password \
 --name nagios-core-4.4.9 -dp 80:80 nagios-core:4.4.9
@@ -227,7 +227,7 @@ docker run \
 3.- Verificar que el contenedor este listo 
 
 ```
-docker container ls
+sudo docker container ls
 
 ```
 Debe aparecer de la siguiente forma:
