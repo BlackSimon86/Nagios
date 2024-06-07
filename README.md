@@ -134,6 +134,11 @@ RUN ./configure --with-httpd-conf=/etc/apache2/sites-enabled && \
     a2enmod rewrite cgi
 # Copy the Nagios basic auth credentials set in the env file;
 COPY .env /usr/ec2-user/etc/
+# Add Nagios and Apache Startup script
+ADD start.sh /
+RUN chmod +x /start.sh
+
+CMD [ "/start.sh" ]
 
 2.- Crea una variable de entorno en vim 
 
